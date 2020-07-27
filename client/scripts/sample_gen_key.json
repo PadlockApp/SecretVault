@@ -1,0 +1,39 @@
+{
+    "logs": [{
+        "msg_index": 0,
+        "log": "",
+        "events": [{
+            "type": "message",
+            "attributes": [{
+                "key": "action",
+                "value": "execute"
+            }, {
+                "key": "module",
+                "value": "compute"
+            }, {
+                "key": "signer",
+                "value": "secret1ff38dxfc0nv07m6aknq7sffg69059fd44lwmkv"
+            }, {
+                "key": "contract_address",
+                "value": "secret10pyejy66429refv3g35g2t7am0was7ya6hvrzf"
+            }]
+        }, {
+            "type": "wasm",
+            "attributes": [{
+                "key": "contract_address",
+                "value": "secret10pyejy66429refv3g35g2t7am0was7ya6hvrzf"
+            }, {
+                "key": "api_key",
+                "value": "api_key_B0U5ziPLzcXuw27dGtAjYsxa8bIxf4flresABqmXUDk="
+            }, {
+                "key": "key_id",
+                "value": "key_R2OQIzB6YAbizUr5Ax4uNo/nqTLDL6x0y+K/AOuJGnI="
+            }, {
+                "key": "public_key",
+                "value": "033a29cc18cd179a280e8de7c106dc7578f9510aeb733dce5039f48472db1bcf68"
+            }]
+        }]
+    }],
+    "transactionHash": "DCBB415D0970181215E14E096A2A0E5051ACD97A3B38B149F7BA70357B4FA498",
+    "data": {}
+}
