@@ -14,31 +14,6 @@ const faucet = {
 };
 
 
-
-/**
- * Whitelists an address.
- */
-async function whitelistAddress (address) {
-    // logger.info(`whitelisting ${address}`)
-    // if (!isValidCosmosAddress(address)) {
-    //     throw new Error(`address=${address} is invalid`)
-    // }
-
-    const whitelistMsg = {"address": address}
-    const client = await getClient()
-    let result = await client.execute(contractAddress, whitelistMsg);
-    console.log(`Whitelisted address: ${JSON.stringify(result)}`);
-}
-
-// const key_seed = new Buffer.from("I love cupcakes").toString('base64')
-// const passphrase = "this too shall pass"
-// const genKeyMsg = {
-//   NewKey: {
-//     key_seed: key_seed, 
-//     passphrase: passphrase
-//   }
-// }
-
 const customFees = {
   upload: {
     amount: [{ amount: "25000", denom: "uscrt" }],
@@ -87,41 +62,25 @@ async function main() {
   console.log(`publicKey=${initPublicKey}, privateKey=${initPrivateKey}`);
 
   
-
   const address = 'secret18acg8ylf9ppgnzqszx0qg5aww53qayrwfh0q0v'
+  const isWhitelistedMsg = {"IsWhitelisted": {"address": address}}
+  let result = await client.queryContractSmart(contractAddress, isWhitelistedMsg);
+  console.log(`IsWhitelisted address: ${JSON.stringify(result, null, 1)}`);
+
   const whitelistMsg = {"WhitelistAddress": {"address": address}}
-  let result = await client.execute(contractAddress, whitelistMsg);
+  result = await client.execute(contractAddress, whitelistMsg);
   console.log(`Whitelisted address: ${JSON.stringify(result)}`);
 
+  result = await client.queryContractSmart(contractAddress, isWhitelistedMsg);
+  console.log(`IsWhitelisted address: ${JSON.stringify(result, null, 1)}`);
 
-  // console.log('Generating key pair');
-  // let result = await client.execute(contractAddress, genKeyMsg);
-  // console.log(`Generated key: ${JSON.stringify(result)}`);
+  const keyRequestMsg = {"RequestSharedKey": {}}
+  result = await client.execute(contractAddress, keyRequestMsg);
+  console.log(`SharedKey result: ${JSON.stringify(result)}`);
 
-  // const attributes = result.logs[0].events[1].attributes;
-  // let apiKey = attributes.find(x => x.key === "api_key").value;
-  // let keyId = attributes.find(x => x.key === "key_id").value;
-  // let publicKey = attributes.find(x => x.key === "public_key").value;
-  // let privateKey = attributes.find(x => x.key === "private_key").value;
 
-  // console.log(`apiKey=${apiKey}, keyId=${keyId}, publicKey=${publicKey}, privateKey=${privateKey}`);
 
-  // Test signing
-  // const message = new Buffer.from("just cupcakes").toString('base64');
-  // const data = crypto.createHash('md5').update(message).digest("hex").length;
 
-  // const signMsg = {
-  //   Sign: 
-  //     {
-  //       passphrase: passphrase,
-  //       key_id: keyId,
-  //       data: data,
-  //       api_key: apiKey
-  //     }
-  // }
-
-  // result = await client.execute(contractAddress, signMsg);
-  // console.log(`Signed message : ${JSON.stringify(result)}`);
 }
 
 main().then(
