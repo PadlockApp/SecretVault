@@ -14,15 +14,17 @@ pub enum HandleMsg {
         passphrase: String,
     },
     RequestSharedKey {
+        id: u64
     },
     WhitelistAddress {
-        address: HumanAddr
+        address: HumanAddr,
+        id: u64
     },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub enum QueryMsg {
-    IsWhitelisted { address: HumanAddr }
+    IsWhitelisted { address: HumanAddr, id: u64 }
 }
 
 /////////////////////////////// Migrate ///////////////////////////////

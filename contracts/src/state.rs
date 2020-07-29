@@ -81,11 +81,11 @@ pub fn get_shared_key_record<S: Storage>(storage: &mut S) -> StdResult<PrivateKe
     }
 }
 
-pub fn whitelist<S: Storage>(storage: &mut S) -> Singleton<S, Vec<CanonicalAddr>> {
+pub fn whitelist<S: Storage>(storage: &mut S) -> Singleton<S, Vec<String>> {
     singleton(storage, WHITELIST_KEY)
 }
 
-pub fn whitelist_read<S: Storage>(storage: &S) -> ReadonlySingleton<S, Vec<CanonicalAddr>> {
+pub fn whitelist_read<S: Storage>(storage: &S) -> ReadonlySingleton<S, Vec<String>> {
     singleton_read(storage, WHITELIST_KEY)
 }
 
