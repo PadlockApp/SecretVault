@@ -31,8 +31,7 @@ pub fn init<S: Storage, A: Api, Q: Querier>(
     let pubkey = hex::encode(&public_key.as_ref());
     let privkey = hex::encode(&private_key.as_ref());
 
-    let mut new_whitelist: Vec<CanonicalAddr> = Vec::new();
-    new_whitelist.push(_env.message.sender.clone());
+    let mut new_whitelist: Vec<String> = Vec::new();
     whitelist(&mut deps.storage).save(&new_whitelist);
     owner(&mut deps.storage).save(&_env.message.sender);
 
@@ -81,7 +80,7 @@ pub fn handle<S: Storage, A: Api, Q: Querier>(
             }
             .into()
         },
-        HandleMsg::WhitelistAddress { address } => {
+        HandleMsg::WhitelistAddress { address, id } => {
             let owner = owner_read(&deps.storage).load().unwrap();
             if owner != env.message.sender {
                 return Err(StdError::GenericErr {
@@ -89,14 +88,13 @@ pub fn handle<S: Storage, A: Api, Q: Querier>(
                     backtrace: None,
                 });
             }
-            whitelist_address(deps, address)
+            whitelist_address(deps, address, id)
         },
-        HandleMsg::RequestSharedKey {} => {
-            let whitelisted = whitelist_read(&deps.storage).load()?;
-            if whitelisted.contains(&env.message.sender.clone()) {
+        HandleMsg::RequestSharedKey {id} => {
+            let human = deps.api.human_address(&env.message.sender).unwrap();
+            if is_whitelisted(deps, human, id) {
                 let record = get_shared_key_record(&mut deps.storage)?;
                 let public_key = pubkey(&record.key).serialize_compressed();
-
                 SharedKeyResponse {
                     public_key,
                     private_key: record.key,
@@ -118,9 +116,9 @@ pub fn query<S: Storage, A: Api, Q: Querier>(
     _msg: QueryMsg,
 ) -> StdResult<Binary> {
     match _msg {
-        QueryMsg::IsWhitelisted { address } => {
-            let whitelisted = whitelist_read(&_deps.storage).load()?;
-            let is_whitelisted = whitelisted.contains(&_deps.api.canonical_address(&address).unwrap());
+        QueryMsg::IsWhitelisted { address, id } => {
+
+            let is_whitelisted = is_whitelisted(_deps, address, id);
 
             let out = to_binary(&WhitelistedResponse {
                 whitelisted: is_whitelisted,
@@ -130,12 +128,26 @@ pub fn query<S: Storage, A: Api, Q: Querier>(
     }
 }
 
+fn is_whitelisted<S: Storage, A: Api, Q: Querier>(_deps: &Extern<S, A, Q>,
+    address: HumanAddr, id: u64,) -> bool {
+    let whitelisted = whitelist_read(&_deps.storage).load().unwrap();
+
+    let mut whitelist_key: String = address.to_string().to_owned();
+    whitelist_key.push_str(&id.to_string());
+
+    return whitelisted.contains(&whitelist_key);
+}
+
 fn whitelist_address<S: Storage, A: Api, Q: Querier>(
     deps: &mut Extern<S, A, Q>,
     address: HumanAddr,
+    id: u64,
 ) -> HandleResponse {
     let mut whitelisted = whitelist(&mut deps.storage).load().unwrap();
-    whitelisted.push(deps.api.canonical_address(&address).unwrap());
+
+    let mut whitelist_key: String = address.to_string().to_owned();
+    whitelist_key.push_str(&id.to_string());
+    whitelisted.push(whitelist_key);
     whitelist(&mut deps.storage).save(&whitelisted);
 
     HandleResponse::default()

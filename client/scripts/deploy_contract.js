@@ -9,7 +9,7 @@ var eccrypto = require("eccrypto");
 const httpUrl = "http://localhost:1317";
 const faucet = {
   mnemonic:
-    "night galaxy steak breeze inquiry patch entry only dwarf economy first student dad attitude assume agent brand disorder artist shallow echo curtain truly kangaroo",
+    "join practice device whale adapt one service east festival filter lawsuit option such vacuum purpose culture uncle toy coil wet reveal cute october desk",
   address: "secret18acg8ylf9ppgnzqszx0qg5aww53qayrwfh0q0v",
 };
 
@@ -62,19 +62,20 @@ async function main() {
   console.log(`publicKey=${initPublicKey}, privateKey=${initPrivateKey}`);
 
   
-  const address = 'secret18acg8ylf9ppgnzqszx0qg5aww53qayrwfh0q0v'
-  const isWhitelistedMsg = {"IsWhitelisted": {"address": address}}
+  const address = myWalletAddress
+  const id = 1;
+  const isWhitelistedMsg = {"IsWhitelisted": {"address": address, "id": id}}
   let result = await client.queryContractSmart(contractAddress, isWhitelistedMsg);
   console.log(`IsWhitelisted address: ${JSON.stringify(result, null, 1)}`);
 
-  const whitelistMsg = {"WhitelistAddress": {"address": address}}
+  const whitelistMsg = {"WhitelistAddress": {"address": address, "id": id}}
   result = await client.execute(contractAddress, whitelistMsg);
   console.log(`Whitelisted address: ${JSON.stringify(result)}`);
 
   result = await client.queryContractSmart(contractAddress, isWhitelistedMsg);
   console.log(`IsWhitelisted address: ${JSON.stringify(result, null, 1)}`);
 
-  const keyRequestMsg = {"RequestSharedKey": {}}
+  const keyRequestMsg = {"RequestSharedKey": {"id": id}}
   result = await client.execute(contractAddress, keyRequestMsg);
   console.log(`SharedKey result: ${JSON.stringify(result)}`);
 
